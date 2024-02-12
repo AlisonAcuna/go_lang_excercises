@@ -8,23 +8,22 @@ import (
 )
 
 func main() {
-	quiz := import_quiz()
-	_, quiz_map_str := compose_questions(quiz)
-	quiz_map_int := convert_answers(quiz_map_str)
-	successes, failures := perform_quiz(quiz_map_int)
-	output_results(successes, failures)
+	quiz := ImportQuiz()
+	quiz_map_str := ComposeQuestions(quiz)
+	quiz_map_int := ConvertAnswers(quiz_map_str)
+	successes, failures := PerformQuiz(quiz_map_int)
+	OutputResults(successes, failures)
 	fmt.Print(successes, failures)
 }
 
 // At the end of the quiz the program should output the total number of questions correct and how many questions there were in total
-func output_results(successes int, failures int) {
-	results := fmt.Sprint("Thank you for taking the quiz! /n Here are your results /n Successes: %i Failures: %i", successes, failures)
-	fmt.Print(results)
+func OutputResults(successes int, failures int) {
+	fmt.Printf("Thank you for taking the quiz! /n Here are your results /n Successes: %d Failures: %d", successes, failures)
 }
 
 // will then give the quiz to a user keeping track of how many questions they get right and how many they get incorrect.
 // Regardless of whether the answer is correct or wrong the next question should be asked immediately afterwards.
-func perform_quiz(quiz_map_int map[string]int) (int, int) {
+func PerformQuiz(quiz_map_int map[string]int) (int, int) {
 	successes := 0
 	failures := 0
 	for key, val := range quiz_map_int {
@@ -36,14 +35,14 @@ func perform_quiz(quiz_map_int map[string]int) (int, int) {
 			fmt.Print("Sucess! \n")
 			successes += 1
 		} else {
-			fmt.Print("Nope :/  \n")
+			fmt.Println("Nope :/")
 			failures += 1
 		}
 	}
 	return successes, failures
 }
 
-func convert_answers(quiz_map_str map[string]string) map[string]int {
+func ConvertAnswers(quiz_map_str map[string]string) map[string]int {
 	quiz_map_int := make(map[string]int)
 	for key, val := range quiz_map_str {
 		i, err := strconv.Atoi(val)
@@ -55,7 +54,7 @@ func convert_answers(quiz_map_str map[string]string) map[string]int {
 	return quiz_map_int
 }
 
-func compose_questions(quiz string) ([]string, map[string]string) {
+func ComposeQuestions(quiz string) map[string]string {
 	entries := strings.Fields(quiz)
 	quiz_map_str := make(map[string]string)
 
@@ -65,11 +64,11 @@ func compose_questions(quiz string) ([]string, map[string]string) {
 		a := q_and_a[1]
 		quiz_map_str[q] = a
 	}
-	return entries, quiz_map_str
+	return quiz_map_str
 }
 
 // Create a program that will read in a quiz provided via a CSV file
-func import_quiz() string {
+func ImportQuiz() string {
 	dat, err := os.ReadFile("quiz.csv")
 	check(err)
 	return string(dat)

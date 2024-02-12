@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-//  To Do: Questions given invalid answers are considered incorrect.
-
 func main() {
 	quiz := import_quiz()
 	_, quiz_map_str := compose_questions(quiz)

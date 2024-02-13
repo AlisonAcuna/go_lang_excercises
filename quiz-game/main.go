@@ -30,6 +30,7 @@ func PerformQuiz(quiz_map_int map[string]int) (int, int) {
 		var i int
 		prompt := fmt.Sprintf("Answer the following question: %s  ", key)
 		fmt.Print(prompt)
+
 		fmt.Scan(&i)
 		if i == val {
 			fmt.Print("Sucess! \n")

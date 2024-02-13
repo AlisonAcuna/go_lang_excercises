@@ -8,9 +8,9 @@ import (
 
 func TestOutputResults(t *testing.T) {
 	tests := []struct {
-		successes  int
-		failures   int
-		wantOutput string
+		successes      int
+		failures       int
+		expectedOutput string
 	}{
 		{5, 5, "Thank you for taking the quiz! /n Here are your results /n Successes: 5 Failures: 5"},
 	}
@@ -28,11 +28,51 @@ func TestOutputResults(t *testing.T) {
 		os.Stdout = oldStdout
 
 		// Get the captured output as a string
-		gotOutput := buf.String()
+		actualOutput := buf.String()
 
 		// Check if the captured output matches the expected output
-		if gotOutput != test.wantOutput {
-			t.Errorf("OutputResults(%d, %d) = %q, want %q", test.successes, test.failures, gotOutput, test.wantOutput)
+		if actualOutput != test.expectedOutput {
+			t.Errorf("OutputResults(%d, %d) = %q, want %q", test.successes, test.failures, actualOutput, test.expectedOutput)
+		}
+	}
+}
+
+func TestConvertAnswers(t *testing.T) {
+	tests := []struct {
+		input          map[string]string
+		expectedOutput map[string]int
+	}{
+		{map[string]string{"8+6": "14", "3+1": "4"}, map[string]int{"8+6": 14, "3+1": 4}},
+	}
+
+	for _, test := range tests {
+		actualOutput := ConvertAnswers(test.input)
+
+		for key, _ := range actualOutput {
+			if actualOutput[key] != test.expectedOutput[key] {
+				t.Errorf("ComposeQuestions(%s) = %q, want %q", test.input, actualOutput, test.expectedOutput)
+			}
+		}
+	}
+}
+
+func TestComposeQuestions(t *testing.T) {
+	tests := []struct {
+		quiz           string
+		expectedOutput map[string]string
+	}{
+		{"8+6,14 3+1,4", map[string]string{"8+6": "14", "3+1": "4"}},
+	}
+
+	for _, test := range tests {
+		actualOutput := ComposeQuestions(test.quiz)
+		if len(actualOutput) != len(test.expectedOutput) {
+			t.Errorf("ComposeQuestions(%s) = %q, want %q", test.quiz, actualOutput, test.expectedOutput)
+		}
+		for key, _ := range actualOutput {
+			if actualOutput[key] != test.expectedOutput[key] {
+				t.Errorf("ComposeQuestions(%s) = %q, want %q", test.quiz, actualOutput, test.expectedOutput)
+			}
 		}
 	}
 }

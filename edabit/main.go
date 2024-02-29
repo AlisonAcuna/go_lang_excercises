@@ -3,9 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	s := "Hello World"
-	chopped_string := StringChop(s)
-	fmt.Print(chopped_string)
+	fmt.Print("Hello World")
 }
 
 func StringChop(s string) string {
@@ -29,4 +27,16 @@ func CheckLength(numbers []int) bool {
 	}
 
 	return sum == 25
+}
+
+// Create a function, that will for a given a, b, c, do the following:
+
+// Add a to itself b times.
+// Check if the result is divisible by c.
+
+func MultiDivision(a int, b int, c int) bool {
+	for i := 1; i < 10; i++ {
+		a = a + a
+	}
+	return a%c == 0
 }

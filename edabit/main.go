@@ -40,3 +40,14 @@ func MultiDivision(a int, b int, c int) bool {
 	}
 	return a%c == 0
 }
+
+// Create a function that takes two numbers as arguments (num, length) and returns an array of multiples of num until the array length reaches length.
+func CreateMultiples(num int, length int) []int {
+	results := []int{num}
+	sum := num
+	for i := 1; i < length; i++ {
+		sum = sum + num
+		results = append(results, sum)
+	}
+	return results
+}

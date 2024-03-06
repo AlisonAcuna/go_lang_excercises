@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -11,7 +12,8 @@ func main() {
 	quiz := ImportQuiz()
 	quiz_map_str := ComposeQuestions(quiz)
 	quiz_map_int := ConvertAnswers(quiz_map_str)
-	successes, failures := PerformQuiz(quiz_map_int)
+	quiz_answers := PrepareAnswers(quiz_map_int)
+	successes, failures := PerformQuiz(quiz_map_int, quiz_answers)
 	OutputResults(successes, failures)
 	fmt.Print(successes, failures)
 }
@@ -21,26 +23,35 @@ func OutputResults(successes int, failures int) {
 	fmt.Printf("Thank you for taking the quiz! /n Here are your results /n Successes: %d Failures: %d", successes, failures)
 }
 
+func PrepareAnswers(quiz_map_int map[string]int) []int {
+	answers := []int{}
+	answerCount := len(quiz_map_int)
+	for i := 1; i <= answerCount; i++ {
+		n := RandomNumber()
+		answers = append(answers, n)
+	}
+	return answers
+}
+
 // will then give the quiz to a user keeping track of how many questions they get right and how many they get incorrect.
 // Regardless of whether the answer is correct or wrong the next question should be asked immediately afterwards.
-func PerformQuiz(quiz_map_int map[string]int) (int, int) {
+func PerformQuiz(quiz_map_int map[string]int, quiz_answers []int) (int, int) {
 	successes := 0
 	failures := 0
-	for key, val := range quiz_map_int {
-		var i int
-		prompt := fmt.Sprintf("Answer the following question: %s  ", key)
-		fmt.Print(prompt)
-
-		fmt.Scan(&i)
-		if i == val {
-			fmt.Print("Sucess! \n")
+	cnt := 0
+	for _, val := range quiz_map_int {
+		if quiz_answers[cnt] == val {
 			successes += 1
 		} else {
-			fmt.Println("Nope :/")
 			failures += 1
 		}
+		cnt++
 	}
 	return successes, failures
+}
+
+func RandomNumber() int {
+	return rand.Int() % 20
 }
 
 func ConvertAnswers(quiz_map_str map[string]string) map[string]int {

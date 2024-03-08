@@ -37,6 +37,49 @@ func TestOutputResults(t *testing.T) {
 	}
 }
 
+func TestPrepareAnswers(t *testing.T) {
+	tests := []struct {
+		inputQuiz map[string]int
+	}{
+		{map[string]int{"8+6": 14, "3+1": 4}},
+		{map[string]int{"8+6": 14, "3+1": 4, "1+1": 2}},
+	}
+	for _, test := range tests {
+		answers := PrepareAnswers(test.inputQuiz)
+		inputLength := len(test.inputQuiz)
+		outputLength := len(answers)
+		if outputLength != inputLength {
+			t.Errorf("PrepareAnswers should create an array of answers %d that is the same length as the map %d", outputLength, inputLength)
+		}
+	}
+}
+
+func TestPerformQuiz(t *testing.T) {
+	tests := []struct {
+		inputQuiz          map[string]int
+		inputAnswers       []int
+		expectedSuccessess int
+		expectedFailures   int
+	}{
+		{map[string]int{"8+6": 14, "3+1": 4}, []int{14, 1}, 1, 1},
+	}
+	for _, test := range tests {
+		successes, failures := PerformQuiz(test.inputQuiz, test.inputAnswers)
+		if successes != test.expectedSuccessess || failures != test.expectedFailures {
+			t.Errorf("PerformQuiz(%q, %q) = %d, %d, want %d, %d,", test.inputQuiz, test.inputAnswers, successes, failures, test.expectedSuccessess, test.expectedFailures)
+		}
+	}
+}
+
+func TestRandomNumber(t *testing.T) {
+	for i := 1; i < 5; i++ {
+		num := RandomNumber()
+		if num > 20 || num < 0 {
+			t.Errorf("RandomNumber should return a positive, round number less than 20 but returned %d", num)
+		}
+	}
+}
+
 func TestConvertAnswers(t *testing.T) {
 	tests := []struct {
 		input          map[string]string
@@ -73,49 +116,6 @@ func TestComposeQuestions(t *testing.T) {
 			if actualOutput[key] != test.expectedOutput[key] {
 				t.Errorf("ComposeQuestions(%s) = %q, want %q", test.quiz, actualOutput, test.expectedOutput)
 			}
-		}
-	}
-}
-
-func TestRandomNumber(t *testing.T) {
-	for i := 1; i < 5; i++ {
-		num := RandomNumber()
-		if num > 20 || num < 0 {
-			t.Errorf("RandomNumber should return a positive, round number less than 20 but returned %d", num)
-		}
-	}
-}
-
-func TestPerformQuiz(t *testing.T) {
-	tests := []struct {
-		inputQuiz          map[string]int
-		inputAnswers       []int
-		expectedSuccessess int
-		expectedFailures   int
-	}{
-		{map[string]int{"8+6": 14, "3+1": 4}, []int{14, 1}, 1, 1},
-	}
-	for _, test := range tests {
-		successes, failures := PerformQuiz(test.inputQuiz, test.inputAnswers)
-		if successes != test.expectedSuccessess || failures != test.expectedFailures {
-			t.Errorf("PerformQuiz(%q, %q) = %d, %d, want %d, %d,", test.inputQuiz, test.inputAnswers, successes, failures, test.expectedSuccessess, test.expectedFailures)
-		}
-	}
-}
-
-func TestPrepareAnswers(t *testing.T) {
-	tests := []struct {
-		inputQuiz map[string]int
-	}{
-		{map[string]int{"8+6": 14, "3+1": 4}},
-		{map[string]int{"8+6": 14, "3+1": 4, "1+1": 2}},
-	}
-	for _, test := range tests {
-		answers := PrepareAnswers(test.inputQuiz)
-		inputLength := len(test.inputQuiz)
-		outputLength := len(answers)
-		if outputLength != inputLength {
-			t.Errorf("PrepareAnswers should create an array of answers %d that is the same length as the map %d", outputLength, inputLength)
 		}
 	}
 }

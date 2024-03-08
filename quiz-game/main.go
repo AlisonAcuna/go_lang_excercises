@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // To Do
@@ -49,14 +50,30 @@ func PerformQuiz(quiz_map_int map[string]int, quiz_answers []int) (int, int) {
 	successes := 0
 	failures := 0
 	cnt := 0
-	for _, val := range quiz_map_int {
-		if quiz_answers[cnt] == val {
-			successes += 1
-		} else {
-			failures += 1
+	timeout := time.After(30 * time.Second)
+	quizChannel := make(chan bool)
+
+	go func() {
+		for _, val := range quiz_map_int {
+			time.Sleep(8 * time.Second)
+			if quiz_answers[cnt] == val {
+				successes += 1
+			} else {
+				failures += 1
+			}
+			cnt++
 		}
-		cnt++
+		quizChannel <- true
+	}()
+
+	select {
+	case <-quizChannel:
+		// Completed within timeout.
+	case <-timeout:
+		// Timeout occurred.
+		return successes, failures
 	}
+
 	return successes, failures
 }
 

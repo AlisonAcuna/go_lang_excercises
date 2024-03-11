@@ -23,8 +23,7 @@ func main() {
 	quiz := ImportQuiz()
 	quiz_map_str := ComposeQuestions(quiz)
 	quiz_map_int := ConvertAnswers(quiz_map_str)
-	quiz_answers := PrepareAnswers(quiz_map_int)
-	successes, failures := PerformQuiz(quiz_map_int, quiz_answers)
+	successes, failures := PerformQuiz(quiz_map_int)
 	OutputResults(successes, failures)
 	fmt.Print(successes, failures)
 }
@@ -34,34 +33,22 @@ func OutputResults(successes int, failures int) {
 	fmt.Printf("Thank you for taking the quiz! /n Here are your results /n Successes: %d Failures: %d", successes, failures)
 }
 
-func PrepareAnswers(quiz_map_int map[string]int) []int {
-	answers := []int{}
-	answerCount := len(quiz_map_int)
-	for i := 1; i <= answerCount; i++ {
-		n := RandomNumber()
-		answers = append(answers, n)
-	}
-	return answers
-}
-
 // will then give the quiz to a user keeping track of how many questions they get right and how many they get incorrect.
 // Regardless of whether the answer is correct or wrong the next question should be asked immediately afterwards.
-func PerformQuiz(quiz_map_int map[string]int, quiz_answers []int) (int, int) {
+func PerformQuiz(quiz_map_int map[string]int) (int, int) {
 	successes := 0
 	failures := 0
-	cnt := 0
 	timeout := time.After(30 * time.Second)
 	quizChannel := make(chan bool)
 
 	go func() {
-		for _, val := range quiz_map_int {
-			time.Sleep(8 * time.Second)
-			if quiz_answers[cnt] == val {
-				successes += 1
-			} else {
-				failures += 1
-			}
-			cnt++
+		for key, val := range quiz_map_int {
+			prompt := fmt.Sprintf("Answer the following question: %s  ", key)
+			fmt.Print(prompt)
+			answer := RandomAnswer()
+			s, f := EvaluateAnswer(answer, val)
+			successes += s
+			failures += f
 		}
 		quizChannel <- true
 	}()
@@ -71,14 +58,28 @@ func PerformQuiz(quiz_map_int map[string]int, quiz_answers []int) (int, int) {
 		// Completed within timeout.
 	case <-timeout:
 		// Timeout occurred.
+		fmt.Print("Timeout!")
 		return successes, failures
 	}
 
 	return successes, failures
 }
 
-func RandomNumber() int {
-	return rand.Int() % 20
+func EvaluateAnswer(answer int, val int) (int, int) {
+	if answer == val {
+		fmt.Print("Sucess! \n")
+		return 1, 0
+	} else {
+		fmt.Print("Nope :/  \n")
+		return 0, 1
+	}
+}
+
+func RandomAnswer() int {
+	time.Sleep(8 * time.Second)
+	a := rand.Int() % 20
+	fmt.Print(a)
+	return a
 }
 
 func ConvertAnswers(quiz_map_str map[string]string) map[string]int {

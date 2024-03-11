@@ -37,45 +37,46 @@ func TestOutputResults(t *testing.T) {
 	}
 }
 
-func TestPrepareAnswers(t *testing.T) {
-	tests := []struct {
-		inputQuiz map[string]int
-	}{
-		{map[string]int{"8+6": 14, "3+1": 4}},
-		{map[string]int{"8+6": 14, "3+1": 4, "1+1": 2}},
-	}
-	for _, test := range tests {
-		answers := PrepareAnswers(test.inputQuiz)
-		inputLength := len(test.inputQuiz)
-		outputLength := len(answers)
-		if outputLength != inputLength {
-			t.Errorf("PrepareAnswers should create an array of answers %d that is the same length as the map %d", outputLength, inputLength)
-		}
-	}
-}
-
 func TestPerformQuiz(t *testing.T) {
 	tests := []struct {
 		inputQuiz          map[string]int
-		inputAnswers       []int
 		expectedSuccessess int
 		expectedFailures   int
 	}{
-		{map[string]int{"8+6": 14, "3+1": 4}, []int{14, 1}, 1, 1},
+		{map[string]int{"8+6": 14, "3+1": 4}, 1, 1},
+		{map[string]int{"8+6": 14, "3+1": 4, "3+2": 5, "3+3": 6}, 3, 1},
 	}
 	for _, test := range tests {
-		successes, failures := PerformQuiz(test.inputQuiz, test.inputAnswers)
-		if successes != test.expectedSuccessess || failures != test.expectedFailures {
-			t.Errorf("PerformQuiz(%q, %q) = %d, %d, want %d, %d,", test.inputQuiz, test.inputAnswers, successes, failures, test.expectedSuccessess, test.expectedFailures)
+		successes, failures := PerformQuiz(test.inputQuiz)
+		if successes+failures != len(test.inputQuiz) && len(test.inputQuiz) < 4 {
+			t.Errorf("PerformQuiz(%q) = %d, %d, but the map is too small for timeout", test.inputQuiz, successes, failures)
 		}
 	}
 }
 
-func TestRandomNumber(t *testing.T) {
+func TestEvaluateAnswer(t *testing.T) {
+	tests := []struct {
+		inputAnswer        int
+		inputVal           int
+		expectedSuccessess int
+		expectedFailures   int
+	}{
+		{14, 14, 1, 0},
+		{14, 13, 0, 1},
+	}
+	for _, test := range tests {
+		successes, failures := EvaluateAnswer(test.inputAnswer, test.inputVal)
+		if test.expectedSuccessess != successes || test.expectedFailures != failures {
+			t.Errorf("EvaluateAnswer(%d, %d) = %d, %d, but go, %d, %d", test.inputAnswer, test.inputVal, test.expectedSuccessess, test.expectedFailures, successes, failures)
+		}
+	}
+}
+
+func TestRandomAnswer(t *testing.T) {
 	for i := 1; i < 5; i++ {
-		num := RandomNumber()
+		num := RandomAnswer()
 		if num > 20 || num < 0 {
-			t.Errorf("RandomNumber should return a positive, round number less than 20 but returned %d", num)
+			t.Errorf("RandomAnswer should return a positive, round number less than 20 but returned %d", num)
 		}
 	}
 }

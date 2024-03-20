@@ -2,43 +2,25 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
-	"github.com/gophercises/urlshort"
 )
 
+var UrlCodes map[string]string
+
 func main() {
-	mux := defaultMux()
-
-	// Build the MapHandler using the mux as the fallback
-	pathsToUrls := map[string]string{
-		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
-		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
-	}
-	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
-
-	// Build the YAMLHandler using the mapHandler as the
-	// fallback
-	yaml := `
-- path: /urlshort
-  url: https://github.com/gophercises/urlshort
-- path: /urlshort-final
-  url: https://github.com/gophercises/urlshort/tree/solution
-`
-	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", yamlHandler)
+	greeting := Greet()
+	fmt.Print(greeting)
 }
 
-func defaultMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", hello)
-	return mux
+func Greet() string {
+	return "Hello World"
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
+func CheckCodeExists(url string) (string, bool) {
+	val, ok := UrlCodes[url]
+	return val, ok
 }
+
+// Generating a unique code for a given URL
+// func GenerateCode(url string) string {
+
+// }

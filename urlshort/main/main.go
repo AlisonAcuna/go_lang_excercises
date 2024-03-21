@@ -2,25 +2,37 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"strings"
 )
 
-var UrlCodes map[string]string
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func main() {
-	greeting := Greet()
-	fmt.Print(greeting)
+	urlCodes := make(map[string]string)
+	url := "https://gobyexample.com/"
+	code, exists := CheckCodeExists(url, urlCodes)
+	len := 5
+	if !exists {
+		GenerateCode(len)
+	}
+	// Add to urlCodes
+	fmt.Print(code)
+	fmt.Print(exists)
 }
 
-func Greet() string {
-	return "Hello World"
-}
-
-func CheckCodeExists(url string) (string, bool) {
-	val, ok := UrlCodes[url]
+func CheckCodeExists(url string, urlCodes map[string]string) (string, bool) {
+	val, ok := urlCodes[url]
 	return val, ok
 }
 
 // Generating a unique code for a given URL
-// func GenerateCode(url string) string {
+func GenerateCode(len int) string {
+	code := make([]string, len)
+	for i := range code {
+		code[i] = string(letters[rand.Intn(52)])
+	}
+	c := strings.Join(code, "")
 
-// }
+	return c
+}

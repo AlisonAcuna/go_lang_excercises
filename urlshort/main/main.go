@@ -8,6 +8,8 @@ import (
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
+// To Do:  Add ints to the letters
+// clean up and test main
 func main() {
 	urlCodes := make(map[string]string)
 	url := "https://gobyexample.com/"
@@ -35,4 +37,9 @@ func GenerateCode(len int) string {
 	c := strings.Join(code, "")
 
 	return c
+}
+
+func AddCode(url string, code string, urlCodes map[string]string) map[string]string {
+	urlCodes[url] = code
+	return urlCodes
 }

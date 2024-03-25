@@ -17,3 +17,6 @@ Generating a unique code for a given URL
 Redirecting users who access the short link to the original URL
 
 NS: Generate test for code exists and figure out how to mock UrlCodes actually having something in it
+
+go test -coverprofile=c.out
+go tool cover -html="c.out"
